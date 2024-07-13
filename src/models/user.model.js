@@ -59,12 +59,12 @@ userSchema.pre("save", async function (next) {
 });
 
 //@dec compare current password with hash is this correct password
-userSchema.method.isPasswordCorrect = async function (password) {
+userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
 //@dec generate accessToken
-userSchema.method.generateAccessToken = function () {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -80,7 +80,7 @@ userSchema.method.generateAccessToken = function () {
 };
 
 //@dec generate resfreshToken
-userSchema.method.generateResfreshToken = function () {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
