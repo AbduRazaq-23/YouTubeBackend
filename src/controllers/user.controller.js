@@ -95,39 +95,47 @@ const registerUser = asyncHandler(async (req, res) => {
 //********************************************************************************//
 //@dec LogIn controller
 const logIn = asyncHandler(async (req, res) => {
+  //@dec get data from req.body
   const { username, email, password } = req.body;
 
+  //@dec if not available throw error
   if (!(username, email, password)) {
     throw new ApiError(400, "fill the field");
   }
-
+  //@dec find email and username on database
   const user = await User.findOne({
     $or: [{ username }, { email }],
   });
 
+  //@dec if not availabe throw error
   if (!user) {
     throw new ApiError(401, "user doesn't exist");
   }
 
+  //@dec then compare password is that valid
   const isPasswordValid = await user.isPasswordCorrect(password);
 
+  //@dec if not valid throw error
   if (!isPasswordValid) {
     throw new ApiError(400, "Invalid Credentials");
   }
 
+  //@dec call a function to generate token by user id
   const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
     user._id
   );
 
+  //@dec then store that data on a variable remove password and refreshToken
   const userLogedIn = await User.findById(user._id).select(
     "-password -refreshToken"
   );
 
+  //@dec Setting a cookie without options
   const options = {
     httpOnly: true,
     secure: true,
   };
-
+  //@dec store token on cookie then send that all in response
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
