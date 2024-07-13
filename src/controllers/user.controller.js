@@ -94,7 +94,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 //********************************************************************************//
 //@dec LogIn controller
-const logIn = asyncHandler(async (req, res) => {
+const logInUser = asyncHandler(async (req, res) => {
   //@dec get data from req.body
   const { username, email, password } = req.body;
 
@@ -153,4 +153,35 @@ const logIn = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, logIn };
+//********************************************************************************//
+//@dec LogOut User
+const logOutUser = asyncHandler(async (req, res) => {
+  //@dec find by id and the unset that token.
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: 1,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  //@dec Setting a cookie without options
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  //@dec return that res and clear coookies
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, "user logOut succesfully"));
+});
+
+//********************************************************************************//
+
+export { registerUser, logInUser, logOutUser };
