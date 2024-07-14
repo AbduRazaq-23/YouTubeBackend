@@ -24,7 +24,10 @@ router.route("/register").post(
   registerUser
 );
 
-router.route("/logInUser").post(logInUser);
-router.route("/logOutUser").post(verifyJWT, logOutUser);
+router.route("/logIn").post(logInUser);
+router.route("/logOut").post(verifyJWT, logOutUser);
+router.post("/hi", (req, res) => {
+  res.send("Hi");
+});
 
 export default router;
