@@ -44,7 +44,4 @@ router
   .route("/updatecoverimage")
   .patch(verifyJWT, upload.single("coverImage"), updateCoverImage);
 
-// router
-//   .route("/updatecoverimage")
-//   .patch(verifyJWT, upload.single("coverImage"), updateCoverImage);
 export default router;
