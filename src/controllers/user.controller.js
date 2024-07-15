@@ -233,10 +233,45 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"));
 });
 
+//********************************************************************************//
+//@dec get current user
+const getCurrentUser = asyncHandler((req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "user fetched successfully"));
+});
+//********************************************************************************//
+//@dec update username and email
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { username, email } = req.body;
+
+  if (!(email, username)) {
+    throw new ApiError(400, "fill the field");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req?.user._id,
+
+    {
+      $set: {
+        username,
+        email,
+      },
+    },
+    { new: true }
+  ).select("-password");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Account details updated"));
+});
+//********************************************************************************//
+//@dec export the controller
 export {
   registerUser,
   logInUser,
   logOutUser,
   refreshAndAccessToken,
   changeCurrentPassword,
+  getCurrentUser,
+  updateAccountDetails,
 };
