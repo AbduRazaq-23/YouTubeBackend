@@ -322,7 +322,7 @@ const getUserChannel = asyncHandler(async (req, res) => {
   const { username } = req.params;
 
   if (!username) {
-    throw new ApiError(400, "user is missing");
+    throw new ApiError(400, "username is missing");
   }
 
   const channel = await User.aggregate([
@@ -352,14 +352,14 @@ const getUserChannel = asyncHandler(async (req, res) => {
         subscribersCount: {
           $size: "subscribers",
         },
-        subbscribedToCount: {
+        subscribedToCount: {
           $size: "subscribedTo",
         },
         isSubscribed: {
           $cond: {
             if: { $in: [req.user?._id, "subscribers.subscriber"] },
             then: true,
-            else: true,
+            else: false,
           },
         },
       },
@@ -369,7 +369,7 @@ const getUserChannel = asyncHandler(async (req, res) => {
         username: 1,
         fullName: 1,
         subscribersCount: 1,
-        subbscribedToCount: 1,
+        subscribedToCount: 1,
         avatar: 1,
         coverImage: 1,
       },
