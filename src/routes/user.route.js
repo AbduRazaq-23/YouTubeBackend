@@ -14,6 +14,8 @@ import {
   updateAccountDetails,
   updateAvatar,
   updateCoverImage,
+  getUserChannel,
+  getWatchHistory,
 } from "../controllers/user.controller.js";
 
 router.route("/register").post(
@@ -43,5 +45,8 @@ router
 router
   .route("/updatecoverimage")
   .patch(verifyJWT, upload.single("coverImage"), updateCoverImage);
+
+router.route("/channel/:username").get(verifyJWT, getUserChannel);
+router.route("/history").get(verifyJWT, getWatchHistory);
 
 export default router;
