@@ -8,8 +8,12 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 const toggleSubscription = asyncHandler(async (req, res) => {
   const { channelId } = req.params;
   // TODO: toggle subscription
+  let subscription = await User.findById(channelId).select(
+    "-password -refreshToken"
+  );
 });
 
+//******************************************************************************//
 // controller to return subscriber list of a channel
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
   const { channelId } = req.params;
