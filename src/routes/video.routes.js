@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
-import { publishAVideo } from "../controllers/video.controller.js";
+import {
+  getVideoById,
+  publishAVideo,
+} from "../controllers/video.controller.js";
 
 const router = Router();
 
@@ -11,5 +14,7 @@ router.route("/uploadvideo").post(
   ]),
   publishAVideo
 );
+
+router.route("/getvideo/:videoId").get(getVideoById);
 
 export default router;

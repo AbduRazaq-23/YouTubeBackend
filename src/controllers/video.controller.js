@@ -6,11 +6,13 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
+//******************************************************************************//
 const getAllVideos = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
   //TODO: get all videos based on query, sort, pagination
 });
 //******************************************************************************//
+//@dec publish video
 const publishAVideo = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
   // TODO: get video, upload to cloudinary, create video
@@ -32,12 +34,6 @@ const publishAVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "thumbnail not available");
   }
 
-  // Upload thumbnail to Cloudinary
-  const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
-  if (!thumbnail) {
-    throw new ApiError(400, "thumbnail not available on cloudinary");
-  }
-
   // Ensure video is provided
   let videoLocalPath;
   if (
@@ -51,8 +47,14 @@ const publishAVideo = asyncHandler(async (req, res) => {
   if (!videoLocalPath) {
     throw new ApiError(400, "video not available");
   }
+  // Upload thumbnail to Cloudinary
+  const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
   // Upload video to Cloudinary
   const videoTitle = await uploadOnCloudinary(videoLocalPath);
+
+  if (!thumbnail) {
+    throw new ApiError(400, "thumbnail not available on cloudinary");
+  }
 
   if (!videoTitle) {
     throw new ApiError(400, "video not available on cloudinary");
@@ -74,9 +76,21 @@ const publishAVideo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, videoFile, "video upload successfully"));
 });
 //******************************************************************************//
+
+//@dec video get by Id
 const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: get video by id
+  if (!videoId) {
+    throw new ApiError(400, "put the name of video");
+  }
+  const getVideo = await Video.findById(videoId);
+  if (!getVideo) {
+    throw new ApiError(500, "video not found");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, getVideo, "video fetched successfully"));
 });
 
 const updateVideo = asyncHandler(async (req, res) => {
