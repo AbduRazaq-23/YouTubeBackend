@@ -6,10 +6,12 @@ const subscriptionSchema = new Schema(
     subscriber: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      default: 0,
     },
     channel: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      default: 0,
     },
   },
   { timestamps: true }

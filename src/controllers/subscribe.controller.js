@@ -44,7 +44,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     throw new ApiError(500, "channel not found");
   }
 
-  const channelSubscription = Subscription.aggregate([
+  const channelSubscription = await Subscription.aggregate([
     {
       $match: {
         channel: new mongoose.Types.ObjectId(channel),
@@ -53,21 +53,41 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     {
       $count: "countChannel",
     },
-    {
-      $project: {
-        countChannel: 1,
-      },
-    },
   ]);
+
+  if (!channelSubscription.length) {
+    throw new ApiError(500, "no subscriber");
+  }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, channelSubscription, "total subscriber"));
+    .json(new ApiResponse(200, channelSubscription[0], "total subscriber"));
 });
 
 // controller to return channel list to which user has subscribed
 const getSubscribedChannels = asyncHandler(async (req, res) => {
-  const { subscriberId } = req.params;
+  const { subscriber } = req.params;
+
+  if (!subscriber) {
+    throw new ApiError(500, "subscriber id not found");
+  }
+
+  const subscriberCount = await Subscription.aggregate([
+    {
+      $match: {
+        subscriber: new mongoose.Types.ObjectId(subscriber),
+      },
+    },
+    {
+      $count: "SubscribedChannel",
+    },
+  ]);
+  if (!getSubscribedChannels.length) {
+    throw new ApiError(500, "subscribed channel not found");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, subscriberCount[0], "all subscribed channel"));
 });
 
 export { toggleSubscription, getUserChannelSubscribers, getSubscribedChannels };
