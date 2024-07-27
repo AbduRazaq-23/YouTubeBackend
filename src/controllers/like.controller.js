@@ -7,24 +7,24 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
-  const userLike = req.user?._id;
+  const userId = req.user?._id;
   //TODO: toggle like on video
 
   if (!videoId) {
     throw new ApiError(500, "video not available");
   }
-  if (!userLike) {
+  if (!userId) {
     throw new ApiError(500, "like id not available");
   }
 
-  const like = await User.findById(userLike);
+  const like = await User.findById(userId);
 
   if (!like) {
     throw new ApiError(400, "U can't like this video u should logIn first");
   }
 
   const checkIfLiked = await Like.findOne({
-    likedBy: userLike,
+    likedBy: userId,
     video: videoId,
   });
 
@@ -32,7 +32,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
     await Like.deleteOne({ _id: checkIfLiked._id });
     return res.status(200).json(new ApiResponse(200, "like removed"));
   } else {
-    await Like.create({ likedBy: userLike, video: videoId });
+    await Like.create({ likedBy: userId, video: videoId });
     return res.status(200).json(new ApiResponse(200, "liked"));
   }
 });
