@@ -32,7 +32,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   //TODO: get user playlists
 
-  const getPlayList = await Playlist.findOne({ owner: userId });
+  const getPlayList = await Playlist.find({ owner: userId });
 
   return res
     .status(200)
